@@ -7,18 +7,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gosuri/uiprogress"
+	"github.com/JojiiOfficial/uiprogress"
 )
 
 func Example() {
-	uiprogress.Start()            // start rendering
-	bar := uiprogress.AddBar(100) // Add a new bar
+	uiprogress.Start()               // start rendering
+	bar := uiprogress.AddNewBar(100) // Add a new bar
 
 	// optionally, append and prepend completion and elapsed time
 	bar.AppendCompleted()
 	bar.PrependElapsed()
 
-	for bar.Incr() {
+	for bar.Incr(1) {
 		time.Sleep(time.Millisecond * 20)
 	}
 }
@@ -29,26 +29,26 @@ func ExampleProgress_AddBar() {
 	// start the progress bars in go routines
 	var wg sync.WaitGroup
 
-	bar1 := uiprogress.AddBar(20).AppendCompleted().PrependElapsed()
+	bar1 := uiprogress.AddNewBar(20).AppendCompleted().PrependElapsed()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		for bar1.Incr() {
+		for bar1.Incr(1) {
 			time.Sleep(waitTime)
 		}
 	}()
 
-	bar2 := uiprogress.AddBar(40).AppendCompleted().PrependElapsed()
+	bar2 := uiprogress.AddNewBar(40).AppendCompleted().PrependElapsed()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		for bar2.Incr() {
+		for bar2.Incr(1) {
 			time.Sleep(waitTime)
 		}
 	}()
 
 	time.Sleep(time.Second)
-	bar3 := uiprogress.AddBar(20).PrependElapsed().AppendCompleted()
+	bar3 := uiprogress.AddNewBar(20).PrependElapsed().AppendCompleted()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -63,14 +63,14 @@ func ExampleProgress_AddBar() {
 
 func ExampleDecoratorFunc() {
 	var steps = []string{"downloading source", "installing deps", "compiling", "packaging", "seeding database", "deploying", "staring servers"}
-	bar := uiprogress.AddBar(len(steps))
+	bar := uiprogress.AddNewBar(len(steps))
 
 	// prepend the current step to the bar
 	bar.PrependFunc(func(b *uiprogress.Bar) string {
 		return "app: " + steps[b.Current()-1]
 	})
 
-	for bar.Incr() {
+	for bar.Incr(1) {
 		time.Sleep(time.Millisecond)
 	}
 }
@@ -80,7 +80,7 @@ func ExampleBar_Incr() {
 
 	// create a new bar and prepend the task progress to the bar
 	count := 1000
-	bar := uiprogress.AddBar(count).AppendCompleted().PrependElapsed()
+	bar := uiprogress.AddNewBar(count).AppendCompleted().PrependElapsed()
 	bar.PrependFunc(func(b *uiprogress.Bar) string {
 		return fmt.Sprintf("Task (%d/%d)", b.Current(), count)
 	})
@@ -94,7 +94,7 @@ func ExampleBar_Incr() {
 		go func() {
 			defer wg.Done()
 			time.Sleep(time.Millisecond * time.Duration(rand.Intn(500)))
-			bar.Incr()
+			bar.Incr(1)
 		}()
 	}
 	time.Sleep(time.Second) // wait for a second for all the go routines to finish

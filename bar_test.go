@@ -26,7 +26,7 @@ func TestBarIncr(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			b.Incr()
+			b.Incr(1)
 			time.Sleep(time.Millisecond * time.Duration(rand.Intn(10)))
 		}()
 	}

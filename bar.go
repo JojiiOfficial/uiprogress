@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gosuri/uiprogress/util/strutil"
+	"github.com/JojiiOfficial/uiprogress/util/strutil"
 )
 
 var (
@@ -67,6 +67,10 @@ type Bar struct {
 
 	appendFuncs  []DecoratorFunc
 	prependFuncs []DecoratorFunc
+
+	// Data represents additional data which can be
+	// used in DecoratorFuncs
+	Data interface{}
 }
 
 // DecoratorFunc is a function that can be prepended and appended to the progress bar
@@ -82,8 +86,7 @@ func NewBar(total int) *Bar {
 		Head:     Head,
 		Fill:     Fill,
 		Empty:    Empty,
-
-		mtx: &sync.RWMutex{},
+		mtx:      &sync.RWMutex{},
 	}
 }
 
@@ -99,12 +102,12 @@ func (b *Bar) Set(n int) error {
 	return nil
 }
 
-// Incr increments the current value by 1, time elapsed to current time and returns true. It returns false if the cursor has reached or exceeds total value.
-func (b *Bar) Incr() bool {
+// Incr increments the current value by o, time elapsed to current time and returns true. It returns false if the cursor has reached or exceeds total value.
+func (b *Bar) Incr(o int) bool {
 	b.mtx.Lock()
 	defer b.mtx.Unlock()
 
-	n := b.current + 1
+	n := b.current + o
 	if n > b.Total {
 		return false
 	}

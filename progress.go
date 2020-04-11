@@ -56,9 +56,14 @@ func New() *Progress {
 	}
 }
 
-// AddBar creates a new progress bar and adds it to the default progress container
-func AddBar(total int) *Bar {
-	return defaultProgress.AddBar(total)
+// AddBar adds bar to the default progress container
+func AddBar(bar *Bar) *Bar {
+	return defaultProgress.AddBar(bar)
+}
+
+// AddNewBar creates a new progress bar and adds it to the default progress container
+func AddNewBar(total int) *Bar {
+	return defaultProgress.AddNewBar(total)
 }
 
 // Start starts the rendering the progress of progress bars using the DefaultProgress. It listens for updates using `bar.Set(n)` and new bars when added using `AddBar`
@@ -76,6 +81,7 @@ func Listen() {
 	defaultProgress.Listen()
 }
 
+// SetOut sets output
 func (p *Progress) SetOut(o io.Writer) {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
@@ -84,18 +90,24 @@ func (p *Progress) SetOut(o io.Writer) {
 	p.lw.Out = o
 }
 
+// SetRefreshInterval sets refresh interval
 func (p *Progress) SetRefreshInterval(interval time.Duration) {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 	p.RefreshInterval = interval
 }
 
+// AddNewBar creates a new progress bar and adds to the container
+func (p *Progress) AddNewBar(total int) *Bar {
+	bar := NewBar(total)
+	return p.AddBar(bar)
+}
+
 // AddBar creates a new progress bar and adds to the container
-func (p *Progress) AddBar(total int) *Bar {
+func (p *Progress) AddBar(bar *Bar) *Bar {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 
-	bar := NewBar(total)
 	bar.Width = p.Width
 	p.Bars = append(p.Bars, bar)
 	return bar
