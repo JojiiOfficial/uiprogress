@@ -1,5 +1,4 @@
-// Package strutil provides various utilities for manipulating strings
-package strutil
+package uiprogress
 
 import (
 	"bytes"

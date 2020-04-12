@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"github.com/JojiiOfficial/uiprogress/util/strutil"
 )
 
 var (
@@ -146,7 +144,7 @@ func (b *Bar) AppendCompleted() *Bar {
 // AppendElapsed appends the time elapsed the be progress bar
 func (b *Bar) AppendElapsed() *Bar {
 	b.AppendFunc(func(b *Bar) string {
-		return strutil.PadLeft(b.TimeElapsedString(), 5, ' ')
+		return PadLeft(b.TimeElapsedString(), 5, ' ')
 	})
 	return b
 }
@@ -170,7 +168,7 @@ func (b *Bar) PrependCompleted() *Bar {
 // PrependElapsed prepends the time elapsed to the begining of the bar
 func (b *Bar) PrependElapsed() *Bar {
 	b.PrependFunc(func(b *Bar) string {
-		return strutil.PadLeft(b.TimeElapsedString(), 5, ' ')
+		return PadLeft(b.TimeElapsedString(), 5, ' ')
 	})
 	return b
 }
@@ -236,5 +234,5 @@ func (b *Bar) TimeElapsed() time.Duration {
 
 // TimeElapsedString returns the formatted string represenation of the time elapsed
 func (b *Bar) TimeElapsedString() string {
-	return strutil.PrettyTime(b.TimeElapsed())
+	return PrettyTime(b.TimeElapsed())
 }
