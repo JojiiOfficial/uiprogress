@@ -69,6 +69,12 @@ type Bar struct {
 	// Data represents additional data which can be
 	// used in DecoratorFuncs
 	Data interface{}
+
+	// Donetext Text of the bar if done
+	Donetext string
+	done     bool
+
+	progress *Progress
 }
 
 // DecoratorFunc is a function that can be prepended and appended to the progress bar
@@ -100,6 +106,14 @@ func (b *Bar) Set(n int) error {
 	return nil
 }
 
+// Stop stops a bar
+func (b *Bar) Stop() {
+	b.mtx.Lock()
+	defer b.mtx.Unlock()
+
+	b.done = true
+}
+
 // Incr increments the current value by o, time elapsed to current time and returns true. It returns false if the cursor has reached or exceeds total value.
 func (b *Bar) Incr(o int) bool {
 	b.mtx.Lock()
@@ -107,8 +121,10 @@ func (b *Bar) Incr(o int) bool {
 
 	n := b.current + o
 	if n > b.Total {
+		b.done = true
 		return false
 	}
+
 	var t time.Time
 	if b.TimeStarted == t {
 		b.TimeStarted = time.Now()
@@ -173,8 +189,19 @@ func (b *Bar) PrependElapsed() *Bar {
 	return b
 }
 
+// SetText sets text of bar. Only possible after bar is not more updated
+func (b *Bar) SetText(text string) {
+	b.Donetext = text
+	b.done = true
+	b.progress.Print()
+}
+
 // Bytes returns the byte presentation of the progress bar
 func (b *Bar) Bytes() []byte {
+	if b.done && len(b.Donetext) > 0 {
+		return []byte(b.Donetext)
+	}
+
 	completedWidth := int(float64(b.Width) * (b.CompletedPercent() / 100.00))
 
 	// add fill and empty bits

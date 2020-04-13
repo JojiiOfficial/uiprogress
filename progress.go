@@ -110,33 +110,34 @@ func (p *Progress) AddBar(bar *Bar) *Bar {
 
 	bar.Width = p.Width
 	p.Bars = append(p.Bars, bar)
+	bar.progress = p
 	return bar
 }
 
 // Listen listens for updates and renders the progress bars
 func (p *Progress) Listen() {
 	for {
-
 		p.mtx.Lock()
 		interval := p.RefreshInterval
 		p.mtx.Unlock()
 
 		select {
 		case <-time.After(interval):
-			p.print()
+			p.Print()
 		case <-p.tdone:
-			p.print()
+			p.Print()
 			close(p.tdone)
 			return
 		}
 	}
 }
 
-func (p *Progress) print() {
+// Print Prints all bars
+func (p *Progress) Print() {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
-	for _, bar := range p.Bars {
-		fmt.Fprintln(p.lw, bar.String())
+	for i := range p.Bars {
+		fmt.Fprintln(p.lw, p.Bars[i].String())
 	}
 	p.lw.Flush()
 }
