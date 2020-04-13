@@ -100,6 +100,7 @@ func (p *Progress) SetRefreshInterval(interval time.Duration) {
 // AddNewBar creates a new progress bar and adds to the container
 func (p *Progress) AddNewBar(total int) *Bar {
 	bar := NewBar(total)
+	bar.progress = p
 	return p.AddBar(bar)
 }
 

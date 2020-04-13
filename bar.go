@@ -196,6 +196,12 @@ func (b *Bar) SetText(text string) {
 	b.progress.Print()
 }
 
+// IsValid return true if bar is not nil
+// and assigned to a progress
+func (b *Bar) IsValid() bool {
+	return b != nil && b.progress != nil
+}
+
 // Bytes returns the byte presentation of the progress bar
 func (b *Bar) Bytes() []byte {
 	if b.done && len(b.Donetext) > 0 {
